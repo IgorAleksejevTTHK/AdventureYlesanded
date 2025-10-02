@@ -1,0 +1,9 @@
+cd desktop
+
+git init AdventureAleksejev
+
+git config --global user.name "Igor Aleksejev"
+
+git config --global user.email "igoralekseje@gmail.com"
+
+git config --global --list
