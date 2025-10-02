@@ -15,4 +15,4 @@ git commit -a -m "git käsude fail on loodud"
 git status
 
 
- ssh-keygen -o -t rsa -C "igoralekseje@gmail.com"
+ ssh-keygen -o -t rsa -C "igoralekseje@gmail.com" 
