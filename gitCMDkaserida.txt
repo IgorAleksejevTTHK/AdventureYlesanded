@@ -7,3 +7,12 @@ git config --global user.name "Igor Aleksejev"
 git config --global user.email "igoralekseje@gmail.com"
 
 git config --global --list
+
+git add .
+
+git commit -a -m "git käsude fail on loodud"
+
+git status
+
+
+ ssh-keygen -o -t rsa -C "igoralekseje@gmail.com"
