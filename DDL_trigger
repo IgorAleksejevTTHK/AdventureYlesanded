@@ -1,0 +1,70 @@
+use AdventureWorksDW2019
+
+create trigger [Trigger_Name]
+ON [Scope(Server|Database)]
+FOR [EventType1,EventType2,EventType3, ...],
+as 
+begin
+end
+
+CREATE TRigger trMyfirstTrigger
+on Database
+for CREATE_TABLE
+AS
+BEGIN 
+	print 'New table created'
+end	
+
+
+ALTER TRIGGER trMyfirstTrigger
+ON database 
+for CREATE_TABLE, ALTER_TABLE, DROP_TABLE
+as
+begin
+rollback
+print 'You cannot create, alter or drop a table'
+end
+
+disable trigger trMyfirstTrigger on database
+
+
+drop trigger trMyfirstTrigger
+
+
+
+create trigger trRenameTable
+on database
+for RENAME
+as
+begin
+print'you just renamed something'
+end
+
+sp_rename 'TestTable', 'NewTestTable' 
+
+sp_rename 'NewTestTable.Id' , 'NewId', 'column'
+
+
+CREATE TRIGGER tr_DatabaseScopeTrigger 
+ON Database
+FOR CREATE_TABLE, ALTER_TABLE, DROP_TABLE
+AS
+BEGIN
+ROLLBACK
+PRINT 'You cannot create, modify, alter or drop a table in the current database'
+END
+
+
+CREATE TRIGGER tr_ServerScopeTrigger
+ON ALL SERVER
+FOR CREATE_TABLE, ALTER_TABLE, DROP_TABLE
+AS
+BEGIN
+ROLLBACK
+PRINT 'You cannot create, modify, alter or drop a table in the current database'
+END
+DISABLE TRIGGER tr_ServerScopeTrigger ON ALL SERVER
+
+ENABLE TRIGGER tr_ServerScopeTrigger ON ALL SERVER
+
+DROP TRIGGER tr_ServerScopeTrigger ON ALL SERVER
