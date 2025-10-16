@@ -1,89 +1,101 @@
-USE AdventureWorksDW2019;
 
-select * from DimEmployee
-select * from DimDepartmentGroup
-
-SELECT EmployeeKey, FirstName, BaseRate, Gender, DepartmentName
-FROM DimEmployee
-JOIN DimDepartmentGroup 
-ON DimEmployee.DepartmentName = DimDepartmentGroup.DepartmentGroupKey
-
-CREATE VIEW vWEmployeeByDepartment
-AS
-SELECT EmployeeKey, FirstName, BaseRate, DepartmentName
-FROM DimEmployee
-JOIN DimDepartmentGroup
-ON DimEmployee.DepartmentName = DimDepartmentGroup.DepartmentGroupKey
-
-SELECT * FROM vWEmployeeByDepartment
+use adventureworksdw2019
 
 
-CREATE VIEW vWCorporateDepartment_Employees
-AS
-SELECT EmployeeKey, FirstName, BaseRate, DepartmentName
-FROM DimEmployee
-JOIN DimDepartmentGroup
-ON DimEmployee.DepartmentName = DimDepartmentGroup.DepartmentGroupKey
-WHERE DimDepartmentGroup.DepartmentGroupName = 'Corporate'
+select * from dimemployee
+select * from dimdepartmentgroup
 
-SELECT * FROM vWCorporateDepartment_Employees
+-- liidame töötajad ja osakonnad
+select employeekey, firstname, baserate, gender, departmentname
+from dimemployee
+join dimdepartmentgroup
+on dimemployee.departmentname = dimdepartmentgroup.departmentgroupkey
 
--- View, kus ei ole BaseRate veergu
-CREATE VIEW vWEmployeesNonConfData
-AS
-SELECT EmployeeKey, FirstName, Gender, DepartmentName
-FROM DimEmployee
-JOIN DimDepartmentGroup
-ON DimEmployee.DepartmentName = DimDepartmentGroup.DepartmentGroupKey
-
-SELECT * FROM vWEmployeesNonConfData
-
-CREATE VIEW vWEmployeesCountByDepartment
-AS
-SELECT DepartmentName, COUNT(DepartmentGroupKey) AS TotalEmployees
-FROM DimEmployee
-JOIN DimDepartmentGroup
-ON DimEmployee.DepartmentName = DimDepartmentGroup.DepartmentGroupKey
-GROUP BY DepartmentName
-
-SELECT * FROM vWEmployeesCountByDepartment
+-- loome view, kus töötaja info koos osakonnaga
+create view vwemployeebydepartment
+as
+select employeekey, firstname, baserate, departmentname
+from dimemployee
+join dimdepartmentgroup
+on dimemployee.departmentname = dimdepartmentgroup.departmentgroupkey
 
 
-sp_helptext vWName
+select * from vwemployeebydepartment
 
-ALTER VIEW
+-- loome view ainult Corporate osakonnaga töötajatele
+create view vwcorporatedepartment_employees
+as
+select employeekey, firstname, baserate, departmentname
+from dimemployee
+join dimdepartmentgroup
+on dimemployee.departmentname = dimdepartmentgroup.departmentgroupkey
+where dimdepartmentgroup.departmentgroupname = 'Corporate'
 
-DROP VIEW vWName
+select * from vwcorporatedepartment_employees
+
+-- view ilma BaseRate veeruta (tundlik info eemaldatud)
+create view vwemployeesnonconfdata
+as
+select employeekey, firstname, gender, departmentname
+from dimemployee
+join dimdepartmentgroup
+on dimemployee.departmentname = dimdepartmentgroup.departmentgroupkey
+
+select * from vwemployeesnonconfdata
+
+-- loendame töötajate arvu osakonna kaupa
+create view vwemployeescountbydepartment
+as
+select departmentname, count(departmentgroupkey) as totalemployees
+from dimemployee
+join dimdepartmentgroup
+on dimemployee.departmentname = dimdepartmentgroup.departmentgroupkey
+group by departmentname
+
+select * from vwemployeescountbydepartment
 
 
-CREATE VIEW vWEmployeesDataExSalary
-AS
-SELECT EmployeeKey, FirstName, Gender, DepartmentName
-FROM DimEmployee
-
-SELECT * FROM vWEmployeesDataExSalary
+sp_helptext vwname
 
 
-UPDATE vWEmployeesDataExSalary
-SET FirstName = 'Mikey' WHERE EmployeeKey = 2
-
-SELECT * FROM DimEmployee
+alter view
 
 
-DELETE FROM vWEmployeesDataExSalary WHERE EmployeeKey = 2
-INSERT INTO vWEmployeesDataExSalary VALUES (2, 'Mikey', 'M', 2)
+drop view vwname
 
-CREATE VIEW vWEmployeeDetailsByDept
-AS
-SELECT EmployeeKey, FirstName, Gender, DepartmentName
-FROM DimEmployee
-JOIN DimDepartmentGroup
-ON DimEmployee.DepartmentName = DimDepartmentGroup.DepartmentGroupKey
+-- loome view ilma Salary veeruta
+create view vwemployeesdataexsalary
+as
+select employeekey, firstname, gender, departmentname
+from dimemployee
 
-SELECT * FROM vWEmployeeDetailsByDept
+select * from vwemployeesdataexsalary
 
 
-UPDATE vWEmployeeDetailsByDept
-SET DepartmentName = 'Corporate' WHERE FirstName = 'John'
+update vwemployeesdataexsalary
+set firstname = 'mikey' 
+where employeekey = 2
 
-SELECT * FROM DimEmployee
+select * from dimemployee
+
+delete from vwemployeesdataexsalary 
+where employeekey = 2
+
+insert into vwemployeesdataexsalary values (2, 'mikey', 'm', 2)
+
+-- loome detailsema view töötajate kohta osakondade kaupa
+create view vwemployeedetailsbydept
+as
+select employeekey, firstname, gender, departmentname
+from dimemployee
+join dimdepartmentgroup
+on dimemployee.departmentname = dimdepartmentgroup.departmentgroupkey
+
+select * from vwemployeedetailsbydept
+
+
+update vwemployeedetailsbydept
+set departmentname = 'Corporate' 
+where firstname = 'john'
+
+select * from dimemployee
