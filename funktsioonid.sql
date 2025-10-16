@@ -1,68 +1,82 @@
-select * from DimEmployee
+
+select * from dimemployee
 
 
-CREATE FUNCTION fn_ILTVF_GetEmployees()
-RETURNS TABLE
-AS
-RETURN
-(SELECT EmployeeKey, FirstName, 
-        CAST(BirthDate AS DATE) AS DOB
-    FROM dbo.DimEmployee
-);
-select * from fn_ILTVF_GetEmployees();
+-- lihtne inline table-valued function (ILTVF)
 
-CREATE FUNCTION fn_MSTVF_GetEmployees()
-RETURNS @Table TABLE 
-(
-    EmloyeeKey INT, 
-    FirstName NVARCHAR(20), 
-    DOB DATE
-)
-AS
-BEGIN
-    INSERT INTO @Table
-    SELECT 
-        EmployeeKey, 
-        FirstName, 
-        CAST(BirthDate AS DATE)
-    FROM DimEmployee;
-
-    RETURN;
-END;
-
-SELECT * FROM fn_MSTVF_GetEmployees();
-
-select * from DimEmployee
---- Esimine Funktsion
-Create Function fn_GetEmployeeNameById(@EmployeeKey int)
-
-Returns nvarchar(20)
+create function fn_iltvf_getemployees()
+returns table
 as
-Begin
-return (select FirstName from DimEmployee Where EmployeeKey = @EmployeeKey)
-End
+return
+(
+    select employeekey, firstname, 
+           cast(birthdate as date) as dob
+    from dbo.dimemployee
+)
 
-sp_helptext fn_GetEmployeeNameById
------alter function 
-Alter Function fn_GetEmployeeNameById(@EmployeeKey int)
 
-Returns nvarchar(20)
-With Encryption 
+select * from fn_iltvf_getemployees()
+
+
+-- mitmeastmeline table-valued function (MSTVF)
+
+create function fn_mstvf_getemployees()
+returns @table table 
+(
+    employeekey int, 
+    firstname nvarchar(20), 
+    dob date
+)
 as
 begin
-Return (select FirstName from DimEmployee Where EmployeeKey = @EmployeeKey)
-End
+    insert into @table
+    select 
+        employeekey, 
+        firstname, 
+        cast(birthdate as date)
+    from dimemployee
 
-sp_helptext fn_GetEmployeeNameById
-
-----Alter Function 
-Alter Function fn_GetEmployeeNameById(@EmployeeKey int)
-Returns vachar(20)
-With SchemaBinding
-as
-Begin
-Return (Select FirstName from DimEmployee where EmployeeKey = @EmployeeKey)
+    return
 end
- 
- 
- DROP TABLE tblEmployees
+
+select * from fn_mstvf_getemployees()
+
+
+
+-- siin tagastatakse töötaja eesnimi id järgi
+create function fn_getemployeenamebyid(@employeekey int)
+returns nvarchar(20)
+as
+begin
+    return (select firstname from dimemployee where employeekey = @employeekey)
+end
+
+
+sp_helptext fn_getemployeenamebyid
+
+
+-- muudame funktsiooni ja lisame encryption 
+alter function fn_getemployeenamebyid(@employeekey int)
+returns nvarchar(20)
+with encryption 
+as
+begin
+    return (select firstname from dimemployee where employeekey = @employeekey)
+end
+
+
+sp_helptext fn_getemployeenamebyid
+
+
+-- uuesti muudame funktsiooni, seekord schema bindinguga
+alter function fn_getemployeenamebyid(@employeekey int)
+returns varchar(20)
+with schemabinding
+as
+begin
+    return (select firstname from dbo.dimemployee where employeekey = @employeekey)
+end
+
+
+
+drop table tblemployees
