@@ -1,39 +1,76 @@
-CT * FROM DimEmployee
-CREATE INDEX IX_DimEmployee_BaseRate
-ON DimEmployee(BaseRate ASC)
 
-  
-EXEC sp_help DimEmployee;
+select * from dimemployee
 
-DROP INDEX DimEmployee.IX_DimEmployee_BaseRate
-
-CREATE CLUSTERED INDEX IX_tblEmployee_Name 
-ON tblEmployee(FirstName);
-
-DROP INDEX tblEmployee.PK__tblEmplo__3214EC070A9D95DB;
-
-CREATE CLUSTERED INDEX IX_tblEmployee_Gender_salary
-ON tblEmployee(Gender DESC, Salary ASC);
-
-CREATE NONCLUSTERED INDEX IX_tblEmployee_Name 
-ON tblEmployee(FirstName);
+create index ix_dimemployee_baserate
+on dimemployee (baserate asc)
 
 
-EXEC sp_helpindex DimEmployee;
-
-CREATE UNIQUE NONCLUSTERED INDEX UIX_DimEmployee_FirstName_LastName
-On DimEmployee(FirstName, LastName)
+exec sp_help dimemployee
 
 
-ALTER TABLE DimEmployee 
-ADD CONSTRAINT UQ_DimEmployee_Title
-UNIQUE NONCLUSTERED (Title)
-  
-EXECUTE SP_HELPCONSTRAINT DimEmployee
-CREATE UNIQUE INDEX IX_DimEmployee_Title
-ON DimEmployee(Title)
-WITH IGNORE_DUP_KEY
+drop index dimemployee.ix_dimemployee_baserate
 
+-- loome clustered indeksi firstname veerule tabelis tblemployee
+create clustered index ix_tblemployee_name
+on tblemployee (firstname)
+
+drop index tblemployee.pk__tblemplo__3214ec070a9d95db
+
+-- loome clustered indeksi mitme veeruga
+create clustered index ix_tblemployee_gender_salary
+on tblemployee (gender desc, salary asc)
+
+-- loome nonclustered indeksi firstname veerule
+create nonclustered index ix_tblemployee_name
+on tblemployee (firstname)
+
+
+exec sp_helpindex dimemployee
+
+-- loome unikaalse nonclustered indeksi kahe veeru kombinatsioonile
+create unique nonclustered index uix_dimemployee_firstname_lastname
+on dimemployee (firstname, lastname)
+
+-- lisame tabelile unikaalse constrainti veerule title
+alter table dimemployee 
+add constraint uq_dimemployee_title
+unique nonclustered (title)
+
+
+execute sp_helpconstraint dimemployee
+
+-- loome unikaalse indeksi, ignoreerib dubleeritud väärtusi
+create unique index ix_dimemployee_title
+on dimemployee (title)
+with ignore_dup_key
+
+
+select * from dimemployee
+where baserate > 5 and baserate < 10
+
+
+delete from dimemployee
+where baserate = 9.50
+
+
+update dimemployee
+set baserate = 50
+where baserate = 9.25
+
+
+select * from dimemployee
+
+
+select * from dimemployee
+order by baserate
+
+select * from dimemployee
+order by baserate desc
+
+-- loendame töötajaid iga baserate väärtuse järgi
+select baserate, count(baserate) as total
+from dimemployee
+group by baserate
 SELECT * FROM DimEmployee WHERE BaseRate > 5 AND BaseRate < 10
 
 DELETE FROM DimEmployee WHERE BaseRate = 9.50
