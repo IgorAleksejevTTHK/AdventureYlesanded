@@ -1,70 +1,58 @@
 use AdventureWorksDW2019
 
-create trigger [Trigger_Name]
-ON [Scope(Server|Database)]
-FOR [EventType1,EventType2,EventType3, ...],
-as 
-begin
-end
-
-CREATE TRigger trMyfirstTrigger
-on Database
-for CREATE_TABLE
-AS
-BEGIN 
-	print 'New table created'
+create trigger trmyfirsttrigger
+on database
+for create_table
+as
+begin 
+    print 'loodi uus tabel'
 end	
 
-
-ALTER TRIGGER trMyfirstTrigger
-ON database 
-for CREATE_TABLE, ALTER_TABLE, DROP_TABLE
+-- ei luba tabeleid teha ega muuta
+alter trigger trmyfirsttrigger
+on database 
+for create_table, alter_table, drop_table
 as
 begin
-rollback
-print 'You cannot create, alter or drop a table'
+    rollback
+    print 'sa ei tohi tabeleid teha ega muuta'
 end
 
-disable trigger trMyfirstTrigger on database
+disable trigger trmyfirsttrigger on database
+drop trigger trmyfirsttrigger on database
 
-
-drop trigger trMyfirstTrigger
-
-
-
-create trigger trRenameTable
+-- kui midagi nimetatakse ümber, näita teadet
+create trigger trrenametable
 on database
-for RENAME
+for rename
 as
 begin
-print'you just renamed something'
+    print 'sa muutsid midagi nimega'
 end
 
-sp_rename 'TestTable', 'NewTestTable' 
+exec sp_rename 'testtable', 'newtesttable'
+exec sp_rename 'newtesttable.id', 'newid', 'column'
 
-sp_rename 'NewTestTable.Id' , 'NewId', 'column'
+-- keelab tabelite loomise ja muutmise selles andmebaasis
+create trigger tr_databasescopetrigger 
+on database
+for create_table, alter_table, drop_table
+as
+begin
+    rollback
+    print 'ei saa siia tabeleid teha ega muuta'
+end
 
+-- keelab tabelite loomise ja muutmise kogu serveris
+create trigger tr_serverscopetrigger
+on all server
+for create_table, alter_table, drop_table
+as
+begin
+    rollback
+    print 'ei saa tabeleid teha ega muuta serveris'
+end
 
-CREATE TRIGGER tr_DatabaseScopeTrigger 
-ON Database
-FOR CREATE_TABLE, ALTER_TABLE, DROP_TABLE
-AS
-BEGIN
-ROLLBACK
-PRINT 'You cannot create, modify, alter or drop a table in the current database'
-END
-
-
-CREATE TRIGGER tr_ServerScopeTrigger
-ON ALL SERVER
-FOR CREATE_TABLE, ALTER_TABLE, DROP_TABLE
-AS
-BEGIN
-ROLLBACK
-PRINT 'You cannot create, modify, alter or drop a table in the current database'
-END
-DISABLE TRIGGER tr_ServerScopeTrigger ON ALL SERVER
-
-ENABLE TRIGGER tr_ServerScopeTrigger ON ALL SERVER
-
-DROP TRIGGER tr_ServerScopeTrigger ON ALL SERVER
+disable trigger tr_serverscopetrigger on all server
+enable trigger tr_serverscopetrigger on all server
+drop trigger tr_serverscopetrigger on all server
