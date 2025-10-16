@@ -1,33 +1,44 @@
-USE AdventureWorksDW2019;
+use adventureworksdw2019
 
-select * from DimEmployee
-select * from DimCustomer
-
-SELECT EmployeeKey, FirstName, Gender
-FROM DimEmployee
-<
-FROM DimEmployee
-WHERE EmployeeKey NOT IN (SELECT CustomerKey FROM DimCustomer)
-
-INSERT INTO DimEmployee VALUES (1, 'Mark', 'Male')
-
-SELECT EmployeeKey, FirstName, Gender
-FROM DimEmployee
-EXCEPT
-SELECT CustomerKey, FirstName, Gender
-FROM DimCustomer
-
-SELECT EmployeeKey, FirstName, Gender
-FROM DimEmployee
-WHERE EmployeeKey NOT IN (SELECT CustomerKey FROM DimCustomer)
+select * from dimemployee
+select * from dimcustomer
 
 
-SELECT EmployeeKey, FirstName, Gender
-FROM DimEmployee
-EXCEPT
-SELECT CustomerKey, FirstName
-FROM DimCustomer
+select employeekey, firstname, gender
+from dimemployee
 
-SELECT EmployeeKey, FirstName, Gender
-FROM DimEmployee
-WHERE EmployeeKey NOT IN (SELECT CustomerKey, FirstName FROM DimCustomer)
+
+-- leiame töötajad, kelle employee key puudub klientide tabelis
+select employeekey, firstname, gender
+from dimemployee
+where employeekey not in (select customerkey from dimcustomer)
+
+
+insert into dimemployee values (1, 'mark', 'male')
+
+
+select employeekey, firstname, gender
+from dimemployee
+except
+select customerkey, firstname, gender
+from dimcustomer
+
+
+-- sama tulemuse saab WHERE NOT IN abil
+select employeekey, firstname, gender
+from dimemployee
+where employeekey not in (select customerkey from dimcustomer)
+
+
+-- näide, kus üks veerg puudu
+select employeekey, firstname, gender
+from dimemployee
+except
+select customerkey, firstname
+from dimcustomer
+
+
+-- lihtsalt näide, mida ei kasutata nii
+select employeekey, firstname, gender
+from dimemployee
+where employeekey not in (select customerkey, firstname from dimcustomer)
