@@ -1,15 +1,25 @@
 ﻿USE AdventureWorksDW2019;
 
-SELECT * FROM DimCustomer;
+select * from dimcustomer
 
-CREATE PROCEDURE spCreateLocalTempTable
-AS 
-BEGIN
-CREATE TABLE #DimEmployee(EmployeeKey INT, FirstName NVARCHAR(20))
-INSERT INTO #DimEmployee VALUES(1,'Mike')
-INSERT INTO #DimEmployee VALUES(2,'John')
-INSERT INTO #DimEmployee VALUES(3,'Todd')
-SELECT * FROM #DimEmployee
-END
--- K�ivita funktsiooni
-EXEC spCreateLocalTempTable
+-- teeme protseduuri, mis loob ajutise tabeli ja näitab seda
+create procedure spcreatelocaltemptable
+as 
+begin
+    -- loome kohaliku ajutise tabeli (# ainult selles sessioonis nähtav)
+    create table #dimemployee (
+        employeekey int,
+        firstname nvarchar(20)
+    )
+
+    -- lisame andmed
+    insert into #dimemployee values (1, 'mike')
+    insert into #dimemployee values (2, 'john')
+    insert into #dimemployee values (3, 'todd')
+
+
+    select * from #dimemployee
+end
+
+
+exec spcreatelocaltemptable
