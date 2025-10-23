@@ -1,58 +1,70 @@
-use AdventureWorksDW2019
+USE AdventureWorksDW2019;
 
-create trigger trmyfirsttrigger
-on database
-for create_table
-as
-begin 
-    print 'loodi uus tabel'
-end	
+-- Loo trigger, mis reageerib tabeli loomisele
+CREATE TRIGGER trmyfirsttrigger
+ON DATABASE
+FOR CREATE_TABLE
+AS
+BEGIN 
+    PRINT 'loodi uus tabel';
+END;
 
--- ei luba tabeleid teha ega muuta
-alter trigger trmyfirsttrigger
-on database 
-for create_table, alter_table, drop_table
-as
-begin
-    rollback
-    print 'sa ei tohi tabeleid teha ega muuta'
-end
+-- Muudame triggerit: keelab tabelite loomise, muutmise ja kustutamise
+ALTER TRIGGER trmyfirsttrigger
+ON DATABASE 
+FOR CREATE_TABLE, ALTER_TABLE, DROP_TABLE
+AS
+BEGIN
+    ROLLBACK;
+    PRINT 'sa ei tohi tabeleid teha ega muuta';
+END;
 
-disable trigger trmyfirsttrigger on database
-drop trigger trmyfirsttrigger on database
+-- Keela trigger
+DISABLE TRIGGER trmyfirsttrigger ON DATABASE;
 
--- kui midagi nimetatakse ümber, näita teadet
-create trigger trrenametable
-on database
-for rename
-as
-begin
-    print 'sa muutsid midagi nimega'
-end
 
-exec sp_rename 'testtable', 'newtesttable'
-exec sp_rename 'newtesttable.id', 'newid', 'column'
+DROP TRIGGER trmyfirsttrigger ON DATABASE;
 
--- keelab tabelite loomise ja muutmise selles andmebaasis
-create trigger tr_databasescopetrigger 
-on database
-for create_table, alter_table, drop_table
-as
-begin
-    rollback
-    print 'ei saa siia tabeleid teha ega muuta'
-end
 
--- keelab tabelite loomise ja muutmise kogu serveris
-create trigger tr_serverscopetrigger
-on all server
-for create_table, alter_table, drop_table
-as
-begin
-    rollback
-    print 'ei saa tabeleid teha ega muuta serveris'
-end
+-- Trigger, mis teavitab, kui midagi nimetatakse ümber
+CREATE TRIGGER trrenametable
+ON DATABASE
+FOR RENAME
+AS
+BEGIN
+    PRINT 'sa muutsid midagi nimega';
+END;
 
-disable trigger tr_serverscopetrigger on all server
-enable trigger tr_serverscopetrigger on all server
-drop trigger tr_serverscopetrigger on all server
+-- Näide tabeli ja veeru ümbernimetamisest
+EXEC sp_rename 'testtable', 'newtesttable';
+EXEC sp_rename 'newtesttable.id', 'newid', 'COLUMN';
+
+-- Keelab tabelite loomise ja muutmise konkreetses andmebaasis
+CREATE TRIGGER tr_databasescopetrigger 
+ON DATABASE
+FOR CREATE_TABLE, ALTER_TABLE, DROP_TABLE
+AS
+BEGIN
+    ROLLBACK;
+    PRINT 'ei saa siia tabeleid teha ega muuta';
+END;
+
+
+-- Keelab tabelite loomise ja muutmise kogu serveris
+CREATE TRIGGER tr_serverscopetrigger
+ON ALL SERVER
+FOR CREATE_TABLE, ALTER_TABLE, DROP_TABLE
+AS
+BEGIN
+    ROLLBACK;
+    PRINT 'ei saa tabeleid teha ega muuta serveris';
+END;
+
+-- Keela trigger kogu serveris
+DISABLE TRIGGER tr_serverscopetrigger ON ALL SERVER;
+
+-- Luba trigger kogu serveris
+ENABLE TRIGGER tr_serverscopetrigger ON ALL SERVER;
+
+-- Kustuta trigger kogu serveris
+DROP TRIGGER tr_serverscopetrigger ON ALL SERVER;
